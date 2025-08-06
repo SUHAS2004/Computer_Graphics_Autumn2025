@@ -7,3 +7,4 @@ The OpenGL version used is 3.3+
 
 Please look at the README files of the corresponding tutorials for more information.
 
+# Computer_Graphics_Autumn2025
