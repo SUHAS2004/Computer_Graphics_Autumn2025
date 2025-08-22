@@ -2,10 +2,9 @@
 #include "shader_util.hpp"
 
 float points[] = {
-    0.0f,  0.5f,  0.0f,
-    0.5f, -0.5f,  0.0f,
-    0.0f, -0.5f,  0.0f,
-    0.5f,  0.5f,  0.0f
+    -0.5f,  0.5f,  0.0f,
+    -0.5f, -0.5f,  0.0f,
+    0.5f, -0.5f,  0.0f
   };
 
 GLuint shaderProgram;
@@ -31,7 +30,7 @@ void initVertexBufferGL(void)
   //Set it as the current buffer to be used by binding it
   glBindBuffer (GL_ARRAY_BUFFER, vbo);
   //Copy the points into the current buffer - 9 float values, start pointer and static data
-  glBufferData (GL_ARRAY_BUFFER, 12 * sizeof (float), points, GL_STATIC_DRAW);
+  glBufferData (GL_ARRAY_BUFFER, 9 * sizeof (float), points, GL_STATIC_DRAW);
 
   //Ask GL for a Vertex Attribute Object (vao)
   glGenVertexArrays (1, &vao);
@@ -77,7 +76,7 @@ int main(int argc, char** argv)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
   //! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(640, 480, "CS475/CS675 OpenGL Framework", NULL, NULL);
+  window = glfwCreateWindow(640, 480, "CS675 Submission of 22b1826", NULL, NULL);
   if (!window)
     {
       glfwTerminate();
