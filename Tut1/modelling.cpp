@@ -6,7 +6,7 @@
 GLuint shaderProgram;
 GLuint uModelViewMatrix;
 
-const int num_vertices = 96;
+const int num_vertices = 200;
 glm::vec4 v_positions[num_vertices];
 glm::vec4 v_colors[num_vertices];
 
@@ -29,6 +29,7 @@ class shape_t {
     public:
         std::vector <glm::vec4> vertices;
         std::vector <glm::vec4> colors;
+        int num_vertices;
         enum shape_type {SPHERE_SHAPE, CYLINDER_SHAPE, BOX_SHAPE, CONE_SHAPE};
         shape_type shape;
         unsigned int level;
@@ -76,7 +77,7 @@ class cone_t : public shape_t {
         void draw() override {
             int points_on_circle = pow(2,(level + 2));
             glm::vec4 vertex[points_on_circle];
-
+            num_vertices = points_on_circle*6;
             // add each point on the unit circle
             for(int i = 0; i < points_on_circle; i++){
                 vertex[i].x = sin(2*i*PI/(points_on_circle));
@@ -93,13 +94,13 @@ class cone_t : public shape_t {
             cone_vertex.w = 1;
 
             //define the center of the cone
-            // glm::vec4 cone_center;
-            // cone_center.x = 0;
-            // cone_center.y = 0;
-            // cone_center.z = 0;
-            // cone_center.w = 1;
+            glm::vec4 cone_center;
+            cone_center.x = 0;
+            cone_center.y = 0;
+            cone_center.z = 0;
+            cone_center.w = 1;
 
-            // generate triangle from vertices
+            // generate curved surface from points on circle and vertex
             for(int i = 0; i < points_on_circle-1; i++){
                 vertices.push_back(vertex[i]);
                 vertices.push_back(vertex[i + 1]);
@@ -109,15 +110,29 @@ class cone_t : public shape_t {
             vertices.push_back(vertex[0]);
             vertices.push_back(cone_vertex);
 
-            // for(int i = 0; i < points_on_circle-1; i++){
-            //     vertices.push_back(vertex[i]);
-            //     vertices.push_back(vertex[i + 1]);
-            //     vertices.push_back(cone_center);
+            for(int i = 0; i < points_on_circle; i++){
+                colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                colors.push_back(glm::vec4(0.5f,0.2f,0.5f,1.0f));
 
-            // }
-            // vertices.push_back(vertex[points_on_circle-1]);
-            // vertices.push_back(vertex[0]);
-            // vertices.push_back(cone_center);
+            }
+
+            //generate flat bottom form points on circle and circle centre
+            for(int i = 0; i < points_on_circle-1; i++){
+                vertices.push_back(vertex[i]);
+                vertices.push_back(vertex[i + 1]);
+                vertices.push_back(cone_center);
+
+            }
+            vertices.push_back(vertex[points_on_circle-1]);
+            vertices.push_back(vertex[0]);
+            vertices.push_back(cone_center);
+
+            for(int i = 0; i < points_on_circle; i++){
+                colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
+                colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
+                colors.push_back(glm::vec4(0.5f,0.5f,0.5f,1.0f));
+            }
 
         }
 
@@ -148,9 +163,8 @@ void initBuffersGL(void)
   for (size_t i = 0; i < cone1.vertices.size(); ++i) {
     v_positions[i] = glm::vec4(cone1.vertices[i].x,cone1.vertices[i].y,cone1.vertices[i].z,cone1.vertices[i].w);
     }
-  for(int i = 0; i<cone1.vertices.size(); i = i + 2){
-    v_colors[i] = glm::vec4(1.0, 1.0, 0.0, 1.0) ;
-    v_colors[i+1] = glm::vec4(0.0, 1.0, 1.0, 1.0) ;
+  for(int i = 0; i<cone1.colors.size(); ++i){
+    v_colors[i] = cone1.colors[i];
     }
   node1 = new csX75::HNode(NULL,num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
   root_node = node1;
