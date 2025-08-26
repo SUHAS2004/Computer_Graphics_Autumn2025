@@ -4,6 +4,7 @@
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern bool enable_perspective;
 extern csX75::HNode* node1, *node2, *node3,*curr_node;
+extern int new_shape;
 namespace csX75
 {
   //! Initialize GL State
@@ -39,11 +40,18 @@ namespace csX75
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
     else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-      curr_node = node1;  
+      new_shape = 1;
     else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-      curr_node = node2; 
+      new_shape = 2;
     else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-      curr_node = node3; 
+      curr_node = node3;
+    else if (key == GLFW_KEY_5 && action == GLFW_PRESS){
+      curr_node->delete_node();
+      csX75::HNode* dummy;
+      dummy = curr_node -> parent;
+      delete curr_node;
+      curr_node = dummy;  
+    }
     else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
       curr_node->dec_ry();
     else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)

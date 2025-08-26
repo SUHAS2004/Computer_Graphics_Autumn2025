@@ -15,7 +15,7 @@ namespace csX75
 		color_buffer_size = c_size;
 		// initialize vao and vbo of the object;
 
-
+		std::vector<HNode*> children;
 		//Ask GL for a Vertex Attribute Objects (vao)
 		glGenVertexArrays (1, &vao);
 		//Ask GL for aVertex Buffer Object (vbo)
@@ -39,7 +39,7 @@ namespace csX75
 
 
 		// set parent
-
+		
 		if(a_parent == NULL){
 			parent = NULL;
 		}
@@ -57,9 +57,9 @@ namespace csX75
 
 	void HNode::update_matrices(){
 
-		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(rx), glm::vec3(1.0f,0.0f,0.0f));
-		rotation = glm::rotate(rotation, glm::radians(ry), glm::vec3(0.0f,1.0f,0.0f));
-		rotation = glm::rotate(rotation, glm::radians(rz), glm::vec3(0.0f,0.0f,1.0f));
+		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(8*rx), glm::vec3(1.0f,0.0f,0.0f));
+		rotation = glm::rotate(rotation, glm::radians(8*ry), glm::vec3(0.0f,1.0f,0.0f));
+		rotation = glm::rotate(rotation, glm::radians(8*rz), glm::vec3(0.0f,0.0f,1.0f));
 
 		translation = glm::translate(glm::mat4(1.0f),glm::vec3(tx,ty,tz));
 
@@ -69,6 +69,10 @@ namespace csX75
 	void HNode::add_child(HNode* a_child){
 		children.push_back(a_child);
 
+	}
+
+	void HNode::delete_node(){
+		parent->children.pop_back();
 	}
 
 	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz){
@@ -89,6 +93,7 @@ namespace csX75
 
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
 		glBindVertexArray (vao);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
 		// for memory 
@@ -152,5 +157,7 @@ namespace csX75
 
 		return mult;
 	}
+	
+
 
 }

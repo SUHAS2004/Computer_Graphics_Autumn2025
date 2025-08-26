@@ -32,15 +32,14 @@ namespace csX75	 {
 		glm::mat4 rotation;
 		glm::mat4 translation;
 		
-		std::vector<HNode*> children;
-		HNode* parent;
 
 		void update_matrices();
 
 	  public:
 		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, std::size_t, std::size_t);
 		//HNode (HNode* , glm::vec4*,  glm::vec4*,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
-
+		std::vector<HNode*> children;
+		HNode* parent;
 		void add_child(HNode*);
 		void render();
 		void change_parameters(GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
@@ -51,6 +50,7 @@ namespace csX75	 {
 		void dec_rx();
 		void dec_ry();
 		void dec_rz();
+		void delete_node();
 	};
 
 	glm::mat4* multiply_stack(std::vector <glm::mat4> );

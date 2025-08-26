@@ -4,8 +4,8 @@
   Written by - 
                Harshavardhan Kode
 */
-#ifndef _COLORCUBE_HPP_
-#define _COLORCUBE_HPP_
+#ifndef _ADDSHAPE_HPP_
+#define _ADDSHAPE_HPP_
 
 // Defining the ESCAPE Key Code
 #define ESCAPE 27
@@ -48,6 +48,8 @@ csX75::HNode* curr_node;
 csX75::HNode* node1;
 csX75::HNode* node2;
 csX75::HNode* node3;
+
+int new_shape ;
 
 //-------------------------------------------------------------------------
 

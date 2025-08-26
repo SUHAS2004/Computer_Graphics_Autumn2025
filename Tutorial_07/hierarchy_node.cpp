@@ -15,7 +15,7 @@ namespace csX75
 		color_buffer_size = c_size;
 		// initialize vao and vbo of the object;
 
-
+		std::cout << "hi" << std::endl;
 		//Ask GL for a Vertex Attribute Objects (vao)
 		glGenVertexArrays (1, &vao);
 		//Ask GL for aVertex Buffer Object (vbo)
@@ -57,9 +57,9 @@ namespace csX75
 
 	void HNode::update_matrices(){
 
-		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(rx), glm::vec3(1.0f,0.0f,0.0f));
-		rotation = glm::rotate(rotation, glm::radians(ry), glm::vec3(0.0f,1.0f,0.0f));
-		rotation = glm::rotate(rotation, glm::radians(rz), glm::vec3(0.0f,0.0f,1.0f));
+		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(3*rx), glm::vec3(1.0f,0.0f,0.0f));
+		rotation = glm::rotate(rotation, glm::radians(3*ry), glm::vec3(0.0f,1.0f,0.0f));
+		rotation = glm::rotate(rotation, glm::radians(3*rz), glm::vec3(0.0f,0.0f,1.0f));
 
 		translation = glm::translate(glm::mat4(1.0f),glm::vec3(tx,ty,tz));
 
