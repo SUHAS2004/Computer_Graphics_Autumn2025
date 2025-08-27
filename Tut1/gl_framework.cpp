@@ -1,5 +1,5 @@
 #include "gl_framework.hpp"
-#include "hierarchy_node.hpp"
+
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern bool enable_perspective;
@@ -44,7 +44,7 @@ namespace csX75
     else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
       new_shape = 2;
     else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-      curr_node = node3;
+      new_shape = 3;
     else if (key == GLFW_KEY_5 && action == GLFW_PRESS){
       curr_node->delete_node();
       csX75::HNode* dummy;
@@ -53,17 +53,9 @@ namespace csX75
       curr_node = dummy;  
     }
     else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
-      curr_node->dec_ry();
+      curr_node->dec();
     else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
-      curr_node->inc_ry();
-    else if (key == GLFW_KEY_UP && action == GLFW_PRESS)
-      curr_node->dec_rx();
-    else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
-      curr_node->inc_rx();
-    else if (key == GLFW_KEY_PAGE_UP && action == GLFW_PRESS)
-      curr_node->dec_rz();
-    else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS)
-      curr_node->inc_rz();
+      curr_node->inc();
     else if (key == GLFW_KEY_P && action == GLFW_PRESS)
       enable_perspective = !enable_perspective;   
     else if (key == GLFW_KEY_A  && action == GLFW_PRESS)
@@ -77,7 +69,29 @@ namespace csX75
     else if (key == GLFW_KEY_Q  && action == GLFW_PRESS)
       c_zrot -= 1.0;
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS)
-      c_zrot += 1.0;   
+      c_zrot += 1.0;  
+    else if (key == GLFW_KEY_R  && action == GLFW_PRESS)
+      CurrentMode = ROTATE;
+    else if (key == GLFW_KEY_X  && action == GLFW_PRESS)
+      CurrentAxis = X_AXIS;
+    else if (key == GLFW_KEY_Y  && action == GLFW_PRESS)
+      CurrentAxis = Y_AXIS;
+    else if (key == GLFW_KEY_Z  && action == GLFW_PRESS)
+      CurrentAxis = Z_AXIS;      
+    else if (key == GLFW_KEY_EQUAL  && action == GLFW_PRESS)
+      c_zrot -= 1.0;
+    else if (key == GLFW_KEY_MINUS  && action == GLFW_PRESS)
+      c_zrot += 1.0;
+    else if (key == GLFW_KEY_C  && action == GLFW_PRESS)
+      c_zrot += 1.0;
+    else if (key == GLFW_KEY_M  && action == GLFW_PRESS)
+      CurrentView = MODELLING;        
+    else if (key == GLFW_KEY_I  && action == GLFW_PRESS)
+      CurrentView = INSPECTION;
+    else if (key == GLFW_KEY_T  && action == GLFW_PRESS)
+      CurrentMode = TRANSLATE;
+    else if (key == GLFW_KEY_G  && action == GLFW_PRESS)
+      CurrentMode = SCALE;
   }
 };  
   

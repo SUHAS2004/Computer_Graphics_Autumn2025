@@ -22,6 +22,9 @@ namespace csX75	 {
 		//glm::vec4 * vertices;
 		//glm::vec4 * colors;
 		GLfloat tx,ty,tz,rx,ry,rz;
+		GLfloat sx = 1.0;
+		GLfloat sy = 1.0;
+		GLfloat sz = 1.0;
 
 		std::size_t vertex_buffer_size;
 		std::size_t color_buffer_size;
@@ -31,6 +34,7 @@ namespace csX75	 {
 
 		glm::mat4 rotation;
 		glm::mat4 translation;
+		glm::mat4 scaling;
 		
 
 		void update_matrices();
@@ -44,12 +48,8 @@ namespace csX75	 {
 		void render();
 		void change_parameters(GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
 		void render_tree();
-		void inc_rx();
-		void inc_ry();
-		void inc_rz();
-		void dec_rx();
-		void dec_ry();
-		void dec_rz();
+		void inc();
+		void dec();
 		void delete_node();
 	};
 

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "hierarchy_node.hpp"
 
 #include <iostream>
 
@@ -20,6 +21,14 @@ namespace csX75
   void framebuffer_size_callback(GLFWwindow* window, int width, int height);
   //!GLFW keyboard callback
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+  enum Mode {TRANSLATE, ROTATE, SCALE};
+  enum Axis {X_AXIS, Y_AXIS, Z_AXIS};
+  enum View {MODELLING, INSPECTION};
+  inline Mode CurrentMode = ROTATE;
+  inline Axis CurrentAxis = X_AXIS;
+  inline View CurrentView = MODELLING;
+
 };
+
 
 #endif

@@ -63,6 +63,8 @@ namespace csX75
 
 		translation = glm::translate(glm::mat4(1.0f),glm::vec3(tx,ty,tz));
 
+		scaling = glm::scale(glm::mat4(1.0f),glm::vec3(sx,sy,sz));
+
 
 	}
 
@@ -105,6 +107,7 @@ namespace csX75
 		
 		matrixStack.push_back(translation);
 		matrixStack.push_back(rotation);
+		matrixStack.push_back(scaling);
 
 		render();
 		for(int i=0;i<children.size();i++){
@@ -115,34 +118,59 @@ namespace csX75
 
 	}
 
-	void HNode::inc_rx(){
-		rx++;
+	void HNode::inc(){
+		if(CurrentMode == ROTATE){
+			if(CurrentAxis == X_AXIS)
+				rx++;
+			if(CurrentAxis == Y_AXIS)
+				ry++;
+			if(CurrentAxis == Z_AXIS)
+				rz++;
+		}
+		else if(CurrentMode == TRANSLATE){
+			if(CurrentAxis == X_AXIS)
+				tx++;
+			if(CurrentAxis == Y_AXIS)
+				ty++;
+			if(CurrentAxis == Z_AXIS)
+				tz++;
+		}
+		else if(CurrentMode == SCALE){
+			if(CurrentAxis == X_AXIS)
+				sx++;
+			if(CurrentAxis == Y_AXIS)
+				sy++;
+			if(CurrentAxis == Z_AXIS)
+				sz++;
+		}
 		update_matrices();
 	}
 
-
-	void HNode::inc_ry(){
-		ry++;
-		update_matrices();
-	}
-
-	void HNode::inc_rz(){
-		rz++;
-		update_matrices();
-	}
-
-	void HNode::dec_rx(){
-		rx--;
-		update_matrices();
-	}
-
-	void HNode::dec_ry(){
-		ry--;
-		update_matrices();
-	}
-
-	void HNode::dec_rz(){
-		rz--;
+	void HNode::dec(){
+		if(CurrentMode == ROTATE){
+			if(CurrentAxis == X_AXIS)
+				rx--;
+			if(CurrentAxis == Y_AXIS)
+				ry--;
+			if(CurrentAxis == Z_AXIS)
+				rz--;
+		}
+		else if(CurrentMode == TRANSLATE){
+			if(CurrentAxis == X_AXIS)
+				tx--;
+			if(CurrentAxis == Y_AXIS)
+				ty--;
+			if(CurrentAxis == Z_AXIS)
+				tz--;
+		}
+		else if(CurrentMode == SCALE){
+			if(CurrentAxis == X_AXIS)
+				sx--;
+			if(CurrentAxis == Y_AXIS)
+				sy--;
+			if(CurrentAxis == Z_AXIS)
+				sz--;
+		}
 		update_matrices();
 	}
 

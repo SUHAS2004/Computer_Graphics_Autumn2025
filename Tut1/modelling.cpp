@@ -6,7 +6,7 @@
 GLuint shaderProgram;
 GLuint uModelViewMatrix;
 
-const int num_vertices = 2000;
+const int num_vertices = 10000;
 glm::vec4 v_positions[num_vertices];
 glm::vec4 v_colors[num_vertices];
 
@@ -36,7 +36,7 @@ class shape_t {
         virtual void draw() {};
         shape_t(unsigned int level) // normal constructor that can only be defined from daughter class
         {      
-            if (level < 0 or level > 4) {
+            if (level < 0 or level > 7) {
                 throw std::invalid_argument("tessellation level must be between 0 and 4");
             }
             this -> level = level;
@@ -49,20 +49,78 @@ class sphere_t : public shape_t {
             shape = SPHERE_SHAPE;
         }
         void draw() override {
-            int num_vert = 1 + 4*(pow(2,level+1)-1); // by sum of geometric series
+            int num_vert = (1 + 4*(pow(2,level+1)-1) + level); // by sum of geometric series
+            int num_traingles[8] = {12,60,132,276,564,1140,2292,4596}; //pre computed number of overlapping vertices required
+            num_vertices = num_traingles[level];
+            std::cout << "num of overlapping vertices : "<< num_vertices <<std::endl;
             glm::vec4 vertex[num_vert];
-            glm::vec4 *current = vertex;
+            int last_pos = 0; // position of the last added element
             for(int i = 0; i < level + 1; i++){ // iterate for each level
                 int points_per_plane = pow(2,(2 + level - i)); // number of points in the circle(plane)
-                float z_val = i*1/(level+1); // z value of vertex
-                float radius = sqrt(1-pow(2,z_val)); // radius of the circle
-                for(int j = 0; j < points_per_plane; j++){ // iterate for each equidistant point on circle
-                     current -> x = sin(j*PI/points_per_plane);
-                     current -> y = cos(j*PI/points_per_plane);
-                     current -> z = z_val;
-                     current++;
+                std::cout << "points in plane "<< i <<" are : " << points_per_plane <<std::endl;
+                float z_val = 1.0f - 1.0f/pow(2,i); // z value of vertex
+                std::cout << "z value : "<< i/(level+1.0f) <<"  "<<i<< std::endl;
+                float radius = sqrt(1.0f-pow(z_val,2)); // radius of the circle   
+                for(int j = 0; j < points_per_plane + 1; j++){ // iterate for each equidistant point on circle
+                  vertex[last_pos].x = radius*sin(2*j*PI/points_per_plane);
+                  vertex[last_pos].y = radius*cos(2*j*PI/points_per_plane);
+                  vertex[last_pos].z = z_val;
+                  vertex[last_pos].w = 1;
+                  std::cout << vertex[last_pos].x <<"-----"<< vertex[last_pos].y <<"------"<< vertex[last_pos].z <<std::endl;
+                  last_pos++;
                 }
             }
+            std::cout << "last pos : "<< last_pos << std::endl;
+            last_pos = 0;
+            int last_pos_slow = 0;
+            for(int i = 0; i < level; i++){ // iterate for each level
+                int points_per_plane = pow(2,(2 + level - i)); // number of points in the circle(plane)
+                for(int j = 0; j < points_per_plane/2; j++){ // iterate for each equidistant point on circle
+                  vertices.push_back(vertex[last_pos ]);
+                  vertices.push_back(vertex[last_pos+ 1 ]);
+                  vertices.push_back(vertex[points_per_plane + 1 + last_pos_slow]);
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+
+                  vertices.push_back(vertex[last_pos + 1 ]);
+                  vertices.push_back(vertex[last_pos + 2 ]);
+                  vertices.push_back(vertex[points_per_plane + 2 + last_pos_slow]);
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+
+                  vertices.push_back(vertex[points_per_plane + 1 + last_pos_slow]);
+                  vertices.push_back(vertex[points_per_plane + 2 + last_pos_slow]);
+                  vertices.push_back(vertex[last_pos + 1 ]);
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+                  last_pos = last_pos + 2;
+                  last_pos_slow++;
+                  
+                }
+                last_pos++;
+                last_pos_slow = last_pos;
+            }
+            //last_pos = num_vert - 6;
+            std::cout << "last_pos :"<<last_pos<<std::endl;
+            glm::vec4 top;
+            top.x = 0;
+            top.y = 0;
+            top.z = 1;
+            top.w = 1;
+            for(int i = 0; i < 4; i++){
+              vertices.push_back(vertex[last_pos]);
+              std::cout << vertex[last_pos].x <<"-----"<< vertex[last_pos].y <<"------"<< vertex[last_pos].z <<std::endl;
+              vertices.push_back(vertex[last_pos+1]);
+              vertices.push_back(top);
+              colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+              colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+              colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+              last_pos++;
+            }
+            std::cout << "hi"<<std::endl;
         }
 
 
@@ -112,7 +170,6 @@ class cylinder_t: public shape_t {
                 colors.push_back(glm::vec4(0.5f,0.2f,0.5f,1.0f));
 
             }
-            std::cout << "HELLO" << std::endl;
             //generate flat bottom form points on circle and circle centre
             for(int i = 0; i < points_on_circle; i++){
                 vertices.push_back(vertex[i]);
@@ -126,6 +183,7 @@ class cylinder_t: public shape_t {
                 vertices.push_back(center);
                 vertex[i].z = 0;
                 vertex[i+1].z = 0;
+                center.z = 0;
             }
 
 
@@ -245,7 +303,6 @@ void initBuffersGL(void)
 
 void addShape(int shape_type){
   shape_t* new_shape = nullptr;
-  std::cout << "HELLO" << shape_type << std::endl;
   if(shape_type == 1){
     new_shape = new cone_t(initial_level);
     new_shape->draw();
@@ -253,11 +310,11 @@ void addShape(int shape_type){
   else if(shape_type == 2){
     new_shape = new cylinder_t(initial_level);
     new_shape->draw();
-    std::cout << "HELLO" << shape_type << std::endl;
   }
   else if(shape_type == 3){
     new_shape = new sphere_t(initial_level);
     new_shape->draw();
+    
   }
   else {
     new_shape = new cone_t(initial_level);
@@ -265,7 +322,6 @@ void addShape(int shape_type){
   }
   std::cout << shape_type <<std::endl; 
   for (size_t i = 0; i < new_shape->num_vertices; ++i) {
-    std::cout << new_shape->vertices[i].x <<std::endl; 
     v_positions[i] = glm::vec4(new_shape->vertices[i].x,new_shape->vertices[i].y,new_shape->vertices[i].z,new_shape->vertices[i].w);
     }
   for(int i = 0; i< new_shape->num_vertices; ++i){
