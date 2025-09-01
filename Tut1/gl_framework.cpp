@@ -67,8 +67,10 @@ namespace csX75
       c_xrot -= 8.0;
     else if (key == GLFW_KEY_S  && action == GLFW_PRESS)
       root_node -> save("shapes.mod");    
-    else if (key == GLFW_KEY_L  && action == GLFW_PRESS)
-      root_node -> load("shapes.mod");     
+    else if (key == GLFW_KEY_L  && action == GLFW_PRESS){
+      curr_node -> load("shapes.mod");
+      curr_node = curr_node -> children[0];
+    }     
     else if (key == GLFW_KEY_Q  && action == GLFW_PRESS)
       c_zrot -= 8.0;
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS)

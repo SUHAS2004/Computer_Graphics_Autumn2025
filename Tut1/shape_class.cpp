@@ -20,9 +20,9 @@ sphere_t::sphere_t (unsigned int level) : shape_t(level) {
 void sphere_t::draw(){
     int num_vert = (1 + 4*(pow(2,level+1)-1) + level); // by sum of geometric series
     int num_traingles[8] = {12,60,132,276,564,1140,2292,4596}; //pre computed number of overlapping vertices required
-    num_vertices = num_traingles[level];
+    num_vertices = num_traingles[level]- 5;
     std::cout << "num of overlapping vertices : "<< num_vertices <<std::endl;
-    glm::vec4 vertex[num_vert];
+    glm::vec4 vertex[2*num_vert];
     int last_pos = 0; // position of the last added element
     for(int i = 0; i < level + 1; i++){ // iterate for each level
         int points_per_plane = pow(2,(2 + level - i)); // number of points in the circle(plane)
@@ -48,23 +48,23 @@ void sphere_t::draw(){
             vertices.push_back(vertex[last_pos ]);
             vertices.push_back(vertex[last_pos+ 1 ]);
             vertices.push_back(vertex[points_per_plane + 1 + last_pos_slow]);
+            colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
-            colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
-            colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+            colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
 
             vertices.push_back(vertex[last_pos + 1 ]);
             vertices.push_back(vertex[last_pos + 2 ]);
             vertices.push_back(vertex[points_per_plane + 2 + last_pos_slow]);
-            colors.push_back(glm::vec4(1.0f,0.2f,0.0f,1.0f));
-            colors.push_back(glm::vec4(1.0f,0.2f,0.0f,1.0f));
-            colors.push_back(glm::vec4(1.0f,0.2f,0.0f,1.0f));
-
+            colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
+            colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+            colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             vertices.push_back(vertex[points_per_plane + 1 + last_pos_slow]);
             vertices.push_back(vertex[points_per_plane + 2 + last_pos_slow]);
+            std::cout << "last pos2 : "<< last_pos_slow + 2 + points_per_plane  << std::endl;
             vertices.push_back(vertex[last_pos + 1 ]);
+            colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
-            colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
-            colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+            colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             last_pos = last_pos + 2;
             last_pos_slow++;
             
@@ -73,6 +73,7 @@ void sphere_t::draw(){
         last_pos_slow = last_pos;
     }
     //last_pos = num_vert - 6;
+    std::cout << "last pos1 : "<< last_pos << std::endl;
     glm::vec4 top;
     top.x = 0;
     top.y = 0;
@@ -83,9 +84,9 @@ void sphere_t::draw(){
         //std::cout << vertex[last_pos].x <<"-----"<< vertex[last_pos].y <<"------"<< vertex[last_pos].z <<std::endl;
         vertices.push_back(vertex[last_pos+1]);
         vertices.push_back(top);
-        colors.push_back(glm::vec4(1.0f,0.2f,0.0f,1.0f));
-        colors.push_back(glm::vec4(1.0f,0.2f,0.0f,1.0f));
-        colors.push_back(glm::vec4(1.0f,0.2f,0.0f,1.0f));
+        colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
+        colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
+        colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
         last_pos++;
     }
     unsigned int size = vertices.size();

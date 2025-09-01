@@ -48,13 +48,8 @@ void initBuffersGL(void)
   //note that the buffers are initialized in the respective constructors
   shape_t* cone1 = new cone_t(3);
   cone1 -> draw();
-  for (size_t i = 0; i < cone1 -> vertices.size(); ++i) {
-    v_positions[i] = glm::vec4(cone1 -> vertices[i].x,cone1 -> vertices[i].y,cone1 -> vertices[i].z,cone1 -> vertices[i].w);
-    }
-  for(int i = 0; i<cone1 -> colors.size(); ++i){
-    v_colors[i] = cone1 -> colors[i];
-    }
-  node1 = new csX75::HNode(NULL,cone1 -> num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
+  node1 = new csX75::HNode(NULL,cone1 -> num_vertices,v_positions,v_colors,sizeof(v_positions),0);
+  node1 -> change_parameters(0,0,0,0,0,0,1,1,1);
   root_node = node1;
   curr_node = node1;
   curr_node -> shape_pointer = cone1;
