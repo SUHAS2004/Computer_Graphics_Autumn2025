@@ -3,7 +3,8 @@
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern bool enable_perspective;
-extern csX75::HNode* node1, *node2, *node3,*curr_node;
+extern csX75::HNode* node1, *node2, *node3,*curr_node,*root_node;
+extern float delta_factor;
 extern int new_shape;
 namespace csX75
 {
@@ -59,17 +60,19 @@ namespace csX75
     else if (key == GLFW_KEY_P && action == GLFW_PRESS)
       enable_perspective = !enable_perspective;   
     else if (key == GLFW_KEY_A  && action == GLFW_PRESS)
-      c_yrot -= 1.0;
+      c_yrot -= 8.0;
     else if (key == GLFW_KEY_D  && action == GLFW_PRESS)
-      c_yrot += 1.0;
+      c_yrot += 8.0;
     else if (key == GLFW_KEY_W  && action == GLFW_PRESS)
-      c_xrot -= 1.0;
+      c_xrot -= 8.0;
     else if (key == GLFW_KEY_S  && action == GLFW_PRESS)
-      c_xrot += 1.0;        
+      root_node -> save("shapes.mod");    
+    else if (key == GLFW_KEY_L  && action == GLFW_PRESS)
+      root_node -> load("shapes.mod");     
     else if (key == GLFW_KEY_Q  && action == GLFW_PRESS)
-      c_zrot -= 1.0;
+      c_zrot -= 8.0;
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS)
-      c_zrot += 1.0;  
+      c_zrot += 8.0;  
     else if (key == GLFW_KEY_R  && action == GLFW_PRESS)
       CurrentMode = ROTATE;
     else if (key == GLFW_KEY_X  && action == GLFW_PRESS)
@@ -79,9 +82,9 @@ namespace csX75
     else if (key == GLFW_KEY_Z  && action == GLFW_PRESS)
       CurrentAxis = Z_AXIS;      
     else if (key == GLFW_KEY_EQUAL  && action == GLFW_PRESS)
-      c_zrot -= 1.0;
+      delta_factor = delta_factor*2.0;
     else if (key == GLFW_KEY_MINUS  && action == GLFW_PRESS)
-      c_zrot += 1.0;
+      delta_factor = delta_factor/2.0;
     else if (key == GLFW_KEY_C  && action == GLFW_PRESS)
       c_zrot += 1.0;
     else if (key == GLFW_KEY_M  && action == GLFW_PRESS)

@@ -1,9 +1,15 @@
 #include "hierarchy_node.hpp"
 
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+#include <string>
 
 extern GLuint vPosition,vColor,uModelViewMatrix;
+extern csX75::HNode *curr_node;
 extern std::vector<glm::mat4> matrixStack;
+extern float delta_factor;
 
 namespace csX75
 {
@@ -77,13 +83,16 @@ namespace csX75
 		parent->children.pop_back();
 	}
 
-	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz){
+	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz, GLfloat asx, GLfloat asy, GLfloat asz){
 		tx = atx;
 		ty = aty;
 		tz = atz;
 		rx = arx;
 		ry = ary;
-		rz = arz;
+		rz = arz; 
+        sx = asx;
+        sy = asy;
+        sz = asz;
 
 		update_matrices();
 	}
@@ -121,27 +130,27 @@ namespace csX75
 	void HNode::inc(){
 		if(CurrentMode == ROTATE){
 			if(CurrentAxis == X_AXIS)
-				rx++;
+				rx += delta_factor;
 			if(CurrentAxis == Y_AXIS)
-				ry++;
+				ry += delta_factor;
 			if(CurrentAxis == Z_AXIS)
-				rz++;
+				rz += delta_factor;
 		}
 		else if(CurrentMode == TRANSLATE){
 			if(CurrentAxis == X_AXIS)
-				tx++;
+				tx += delta_factor;
 			if(CurrentAxis == Y_AXIS)
-				ty++;
+				ty += delta_factor;
 			if(CurrentAxis == Z_AXIS)
-				tz++;
+				tz += delta_factor;
 		}
 		else if(CurrentMode == SCALE){
 			if(CurrentAxis == X_AXIS)
-				sx++;
+				sx += delta_factor;
 			if(CurrentAxis == Y_AXIS)
-				sy++;
+				sy += delta_factor;
 			if(CurrentAxis == Z_AXIS)
-				sz++;
+				sz += delta_factor;
 		}
 		update_matrices();
 	}
@@ -149,27 +158,27 @@ namespace csX75
 	void HNode::dec(){
 		if(CurrentMode == ROTATE){
 			if(CurrentAxis == X_AXIS)
-				rx--;
+				rx = rx - delta_factor;
 			if(CurrentAxis == Y_AXIS)
-				ry--;
+				ry = ry - delta_factor;
 			if(CurrentAxis == Z_AXIS)
-				rz--;
+				rz = rz - delta_factor;
 		}
 		else if(CurrentMode == TRANSLATE){
 			if(CurrentAxis == X_AXIS)
-				tx--;
+				tx = tx - delta_factor;
 			if(CurrentAxis == Y_AXIS)
-				ty--;
+				ty = ty - delta_factor;
 			if(CurrentAxis == Z_AXIS)
-				tz--;
+				tz = tz - delta_factor;
 		}
 		else if(CurrentMode == SCALE){
 			if(CurrentAxis == X_AXIS)
-				sx--;
+				sx = sx - delta_factor;
 			if(CurrentAxis == Y_AXIS)
-				sy--;
+				sy = sy - delta_factor;
 			if(CurrentAxis == Z_AXIS)
-				sz--;
+				sz = sz - delta_factor;
 		}
 		update_matrices();
 	}
@@ -185,6 +194,111 @@ namespace csX75
 
 		return mult;
 	}
+
+
+    void HNode::addShape(int shape_type){ // shape type is made back to zero in renderGL function
+        std::cout << "adding shape" << shape_type << "\n";
+        const int num_vertices = 10000;
+        glm::vec4 v_positions[num_vertices];
+        glm::vec4 v_colors[num_vertices];
+        int initial_level = 3;
+        shape_t* new_shape = nullptr;
+        if(shape_type == 1){
+            new_shape = new cone_t(initial_level);
+            new_shape->draw();
+        }
+        else if(shape_type == 2){
+            new_shape = new cylinder_t(initial_level);
+            new_shape->draw();
+        }
+        else if(shape_type == 3){
+            new_shape = new sphere_t(initial_level);
+            new_shape->draw();
+        }
+        else {
+            new_shape = new cone_t(initial_level);
+            new_shape->draw();
+        }
+        std::cout << shape_type <<std::endl; 
+        for (size_t i = 0; i < new_shape->num_vertices; ++i) {
+            v_positions[i] = glm::vec4(new_shape->vertices[i].x,new_shape->vertices[i].y,new_shape->vertices[i].z,new_shape->vertices[i].w);
+        }
+        for(int i = 0; i< new_shape->num_vertices; ++i){
+            v_colors[i] = new_shape->colors[i];
+        }
+        HNode* node2 = new csX75::HNode(curr_node,new_shape->num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
+        node2->change_parameters(2.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0);
+        node2 -> shape_pointer = new_shape;
+        curr_node = node2;
+    }
+
+	void HNode::save_tree(std::ofstream& outFile) {
+        outFile << "NODE_BEGIN\n";
+        outFile << std::fixed << std::setprecision(6);
+        outFile << "num_vertices " << num_vertices << "\n";
+        outFile << "shape_type " << shape_pointer -> shape_int << "\n"; 
+        outFile << tx << " " << ty << " " << tz << " "
+                << rx << " " << ry << " " << rz << " "
+                << sx << " " << sy << " " << sz << "\n";
+
+        for (HNode* child : children) {
+            child->save_tree(outFile);
+        }
+        outFile << "NODE_END\n";
+	}
+
+	void HNode::save(const std::string& filename) {
+		std::ofstream outFile(filename);
+		if (!outFile) {
+			std::cerr << "Error opening file\n";
+			return;
+		}
+		save_tree(outFile);
+		std::cout << "MODEL SAVED to " << filename << std::endl; 
+		outFile.close();
+	}
+	void HNode::load(const std::string& filename){
+		std::ifstream in(filename);
+		if (!in) {
+			std::cerr << "Error opening file\n";
+			return;
+		}
+		std::string line;
+		HNode* node_pointer = NULL;
+		while (std::getline(in, line)) {
+            std::cout << line << "\n";
+            float num_vert,tx,ty,tz,rx,ry,rz,sx,sy,sz;
+            int shapet;
+            std::string key;
+
+            if(line == "NODE_BEGIN"){
+                std::getline(in,line);
+                std::istringstream iss(line);
+                iss >> key >> num_vert;
+
+                std::getline(in,line);
+                std::istringstream iss1(line);
+                iss1 >> key >> shapet;
+
+                std::getline(in,line);
+                std::istringstream iss2(line);
+                iss2 >> tx >> ty >> tz >> rx >> ry >> rz >> sx >> sy >> sz;
+                
+                addShape(shapet);
+                curr_node -> change_parameters(tx,ty,tz,rx,ry,rz,sx,sy,sz);
+                node_pointer = curr_node;
+            }
+            if(line == "NODE_END"){
+                node_pointer = node_pointer -> parent;
+            }
+		}
+		curr_node = node_pointer -> children[0];
+	}
+
+
+
+
+
 	
 
 

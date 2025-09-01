@@ -21,6 +21,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "hierarchy_node.hpp"
+#include "shape_class.hpp"
 
 /*// Translation Parameters
 GLfloat xpos=0.0,ypos=0.0,zpos=0.0;
@@ -48,6 +49,8 @@ csX75::HNode* curr_node;
 csX75::HNode* node1;
 csX75::HNode* node2;
 csX75::HNode* node3;
+
+float delta_factor = 1;
 
 int new_shape ;
 
