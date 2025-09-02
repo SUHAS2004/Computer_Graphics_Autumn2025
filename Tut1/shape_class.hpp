@@ -56,5 +56,13 @@ class cone_t : public shape_t {
         
 
 };
+class box_t : public shape_t {
+    public:
+        ~box_t() override = default;
+        void draw() override;
+        explicit box_t(unsigned int level);
+        void quad(int a, int b, int c, int d,glm::vec4* init_positions, glm::vec4* init_colors);
+        
 
+};
 #endif

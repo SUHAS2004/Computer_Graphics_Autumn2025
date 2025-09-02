@@ -20,7 +20,7 @@ glm::mat4 rotation_matrix;
 glm::mat4 model_matrix;
 glm::mat4 view_matrix;
 
-int initial_level = 3;
+int initial_level = 4;
 
 
 
@@ -46,7 +46,7 @@ void initBuffersGL(void)
   uModelViewMatrix = glGetUniformLocation( shaderProgram, "uModelViewMatrix");
 
   //note that the buffers are initialized in the respective constructors
-  shape_t* cone1 = new cone_t(3);
+  shape_t* cone1 = new cone_t(0);
   cone1 -> draw();
   node1 = new csX75::HNode(NULL,cone1 -> num_vertices,v_positions,v_colors,sizeof(v_positions),0);
   node1 -> change_parameters(0,0,0,0,0,0,1,1,1);

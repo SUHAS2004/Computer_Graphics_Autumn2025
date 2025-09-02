@@ -21,7 +21,7 @@ void sphere_t::draw(){
     int num_vert = (1 + 4*(pow(2,level+1)-1) + level); // by sum of geometric series
     int num_traingles[8] = {12,60,132,276,564,1140,2292,4596}; //pre computed number of overlapping vertices required
     num_vertices = num_traingles[level]- 5;
-    std::cout << "num of overlapping vertices : "<< num_vertices <<std::endl;
+    //std::cout << "num of overlapping vertices : "<< num_vertices <<std::endl;
     glm::vec4 vertex[2*num_vert];
     int last_pos = 0; // position of the last added element
     for(int i = 0; i < level + 1; i++){ // iterate for each level
@@ -35,11 +35,11 @@ void sphere_t::draw(){
             vertex[last_pos].y = radius*cos(2*j*PI/points_per_plane);
             vertex[last_pos].z = z_val;
             vertex[last_pos].w = 1;
-            std::cout << vertex[last_pos].x <<"-----"<< vertex[last_pos].y <<"------"<< vertex[last_pos].z <<std::endl;
+            //std::cout << vertex[last_pos].x <<"-----"<< vertex[last_pos].y <<"------"<< vertex[last_pos].z <<std::endl;
             last_pos++;
         }
     }
-    std::cout << "last pos : "<< last_pos << std::endl;
+    //std::cout << "last pos : "<< last_pos << std::endl;
     last_pos = 0;
     int last_pos_slow = 0;
     for(int i = 0; i < level; i++){ // iterate for each level
@@ -73,7 +73,7 @@ void sphere_t::draw(){
         last_pos_slow = last_pos;
     }
     //last_pos = num_vert - 6;
-    std::cout << "last pos1 : "<< last_pos << std::endl;
+    //std::cout << "last pos1 : "<< last_pos << std::endl;
     glm::vec4 top;
     top.x = 0;
     top.y = 0;
@@ -235,3 +235,69 @@ void cone_t::draw() {
     }
 
 }
+
+box_t::box_t(unsigned int level) : shape_t(level) {
+    shape = BOX_SHAPE;
+    shape_int = 4;
+}
+void box_t::draw() {
+
+
+
+    num_vertices = 36*(level + 1)*(level + 1)*(level +1);
+
+    glm::vec4 v_positions[8] = {
+    glm::vec4(0.0, -0.1, 0.1, 1.0),
+    glm::vec4(0.0, 0.1, 0.1, 1.0),
+    glm::vec4(0.2, 0.1, 0.1, 1.0),
+    glm::vec4(0.2, -0.1, 0.1, 1.0),
+    glm::vec4(0.0, -0.1, -0.1, 1.0),
+    glm::vec4(0.0, 0.1, -0.1, 1.0),
+    glm::vec4(0.2, 0.1, -0.1, 1.0),
+    glm::vec4(0.2, -0.1, -0.1, 1.0)};
+
+    //RGBA colors
+    glm::vec4 init_colors[8] = {
+    glm::vec4(0.5f,0.5f,0.0f,1.0f),
+    glm::vec4(0.0f,0.2f,0.5f,1.0f),
+    glm::vec4(0.5f,0.5f,0.0f,1.0f),
+    glm::vec4(0.0f,0.2f,0.5f,1.0f),
+    glm::vec4(0.5f,0.5f,0.0f,1.0f),
+    glm::vec4(0.0f,0.2f,0.5f,1.0f),
+    glm::vec4(0.5f,0.5f,0.0f,1.0f),
+    glm::vec4(0.0f,0.2f,0.5f,1.0f)
+    };
+
+    glm::vec4 init_positions[8];
+    // generate 12 triangles: 36 vertices and 36 colors
+    for(float i = 0; i< level+1; i++){
+        for(float j = 0; j<level+1; j++){
+            for(float k = 0; k<level+1; k++){
+                for(int n = 0; n<8; n++){
+                    init_positions[n] = glm::translate(glm::mat4(1.0f),glm::vec3(i/5,j/5,k/5))*v_positions[n];
+                }
+                quad( 1, 0, 3, 2, init_positions, init_colors );
+                quad( 2, 3, 7, 6, init_positions, init_colors );
+                quad( 3, 0, 4, 7, init_positions, init_colors );
+                quad( 6, 5, 1, 2, init_positions, init_colors );
+                quad( 4, 5, 6, 7, init_positions, init_colors );
+                quad( 5, 4, 0, 1, init_positions, init_colors );
+            }
+        }
+    }
+
+}
+// quad generates two triangles for each face and assigns colors to the vertices
+void box_t::quad(int a, int b, int c, int d, glm::vec4* init_positions, glm::vec4* init_colors)
+{    
+
+
+    int tri_idx=0;
+    colors.push_back(init_colors[a]); vertices.push_back(init_positions[a]); tri_idx++;
+    colors.push_back(init_colors[b]); vertices.push_back(init_positions[b]); tri_idx++;
+    colors.push_back(init_colors[c]); vertices.push_back(init_positions[c]); tri_idx++;
+    colors.push_back(init_colors[a]); vertices.push_back(init_positions[a]); tri_idx++;
+    colors.push_back(init_colors[c]); vertices.push_back(init_positions[c]); tri_idx++;
+    colors.push_back(init_colors[d]); vertices.push_back(init_positions[d]); tri_idx++;
+}
+

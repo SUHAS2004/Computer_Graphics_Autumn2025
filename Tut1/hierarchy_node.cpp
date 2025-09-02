@@ -10,6 +10,7 @@ extern GLuint vPosition,vColor,uModelViewMatrix;
 extern csX75::HNode *curr_node;
 extern std::vector<glm::mat4> matrixStack;
 extern float delta_factor;
+extern int initial_level;
 
 namespace csX75
 {
@@ -201,7 +202,6 @@ namespace csX75
         const int num_vertices = 10000;
         glm::vec4 v_positions[num_vertices];
         glm::vec4 v_colors[num_vertices];
-        int initial_level = 3;
         shape_t* new_shape = nullptr;
         if(shape_type == 1){
             new_shape = new cone_t(initial_level);
@@ -215,9 +215,12 @@ namespace csX75
             new_shape = new sphere_t(initial_level);
             new_shape->draw();
         }
-        else {
-            new_shape = new cone_t(initial_level);
+		else if(shape_type == 4){
+            new_shape = new box_t(initial_level);
             new_shape->draw();
+        }
+        else {
+            std::cerr << "Invalid shape requested" << std::endl;
         }
         std::cout << shape_type <<std::endl; 
         for (size_t i = 0; i < new_shape->num_vertices; ++i) {
