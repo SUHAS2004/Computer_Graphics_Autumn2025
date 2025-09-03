@@ -43,7 +43,7 @@ GLuint vPosition,vColor;
 //global matrix stack for hierarchical modelling
 std::vector<glm::mat4> matrixStack;
 //Running variable to toggle wireframe/solid modelling
-bool solid=false;
+bool solid=true;
 
 //Set tesselation level
 int initial_level = 4;
