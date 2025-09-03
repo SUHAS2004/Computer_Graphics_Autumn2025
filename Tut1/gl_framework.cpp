@@ -75,6 +75,7 @@ namespace csX75
         curr_node->delete_node();
         csX75::HNode* dummy;
         dummy = curr_node -> parent;
+        curr_node -> shape_pointer -> ~shape_t(); /// calling the destructor to the shape pointer
         delete curr_node;
         curr_node = dummy;  
       }
