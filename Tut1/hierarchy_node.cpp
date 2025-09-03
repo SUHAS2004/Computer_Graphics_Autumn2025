@@ -7,10 +7,11 @@
 #include <string>
 
 extern GLuint vPosition,vColor,uModelViewMatrix;
-extern csX75::HNode *curr_node;
+extern csX75::HNode *curr_node, *tail_node;
 extern std::vector<glm::mat4> matrixStack;
 extern float delta_factor;
 extern int initial_level;
+extern bool solid;
 
 namespace csX75
 {
@@ -105,7 +106,9 @@ namespace csX75
 
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
 		glBindVertexArray (vao);
+		if(!solid){
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
 		glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
 		// for memory 
@@ -198,55 +201,61 @@ namespace csX75
 
 
     void HNode::addShape(int shape_type){ // shape type is made back to zero in renderGL function
-        std::cout << "adding shape" << shape_type << "\n";
+        //std::cout << "adding shape" << shape_type << "\n";
         const int num_vertices = 10000;
         glm::vec4 v_positions[num_vertices];
         glm::vec4 v_colors[num_vertices];
         shape_t* new_shape = nullptr;
-        if(shape_type == 1){
-            new_shape = new cone_t(initial_level);
-            new_shape->draw();
+		if(shape_type == 5){ // shape_type 5 is a dummy invisible shape used to deleting root
+			new_shape = new dummy_t(initial_level);
+			new_shape->draw();
         }
-        else if(shape_type == 2){
-            new_shape = new cylinder_t(initial_level);
-            new_shape->draw();
-        }
-        else if(shape_type == 3){
-            new_shape = new sphere_t(initial_level);
-            new_shape->draw();
-        }
+		else if(shape_type == 1){
+			new_shape = new cone_t(initial_level);
+			new_shape->draw();
+		}
+		else if(shape_type == 2){
+			new_shape = new cylinder_t(initial_level);
+			new_shape->draw();
+		}
+		else if(shape_type == 3){
+			new_shape = new sphere_t(initial_level);
+			new_shape->draw();
+		}
 		else if(shape_type == 4){
-            new_shape = new box_t(initial_level);
-            new_shape->draw();
-        }
-        else {
-            std::cerr << "Invalid shape requested" << std::endl;
-        }
-        std::cout << shape_type <<std::endl; 
-        for (size_t i = 0; i < new_shape->num_vertices; ++i) {
-            v_positions[i] = glm::vec4(new_shape->vertices[i].x,new_shape->vertices[i].y,new_shape->vertices[i].z,new_shape->vertices[i].w);
-        }
-        for(int i = 0; i< new_shape->num_vertices; ++i){
-            v_colors[i] = new_shape->colors[i];
-        }
-        HNode* node2 = new csX75::HNode(curr_node,new_shape->num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
-        node2->change_parameters(2.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0);
-        node2 -> shape_pointer = new_shape;
-        curr_node = node2;
+			new_shape = new box_t(initial_level);
+			new_shape->draw();
+		}
+		else {
+			std::cerr << "Invalid shape requested" << std::endl;
+		}
+		//std::cout << shape_type <<std::endl; 
+		for (size_t i = 0; i < new_shape->num_vertices; ++i) {
+			v_positions[i] = glm::vec4(new_shape->vertices[i].x,new_shape->vertices[i].y,new_shape->vertices[i].z,new_shape->vertices[i].w);
+		}
+		for(int i = 0; i< new_shape->num_vertices; ++i){
+			v_colors[i] = new_shape->colors[i];
+		}
+		HNode* node2 = new csX75::HNode(curr_node,new_shape->num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
+		node2->change_parameters(2.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0);
+		node2 -> shape_pointer = new_shape;
+		curr_node = node2;
     }
 
 	void HNode::save_tree(std::ofstream& outFile) {
-        outFile << "NODE_BEGIN\n";
+		if(shape_pointer != NULL){
+		outFile << "NODE_BEGIN\n";
         outFile << std::fixed << std::setprecision(6);
         outFile << "num_vertices " << num_vertices << "\n";
         outFile << "shape_type " << shape_pointer -> shape_int << "\n"; 
         outFile << tx << " " << ty << " " << tz << " "
                 << rx << " " << ry << " " << rz << " "
                 << sx << " " << sy << " " << sz << "\n";
-
+		}
         for (HNode* child : children) {
             child->save_tree(outFile);
         }
+		if(shape_pointer != NULL)
         outFile << "NODE_END\n";
 	}
 
@@ -260,16 +269,19 @@ namespace csX75
 		std::cout << "MODEL SAVED to " << filename << std::endl; 
 		outFile.close();
 	}
+
 	void HNode::load(const std::string& filename){
+		HNode* node_pointer = NULL;
+		addShape(5);
 		std::ifstream in(filename);
 		if (!in) {
 			std::cerr << "Error opening file\n";
 			return;
 		}
 		std::string line;
-		HNode* node_pointer = NULL;
+
 		while (std::getline(in, line)) {
-            std::cout << line << "\n";
+            //std::cout << line << "\n";
             float num_vert,tx,ty,tz,rx,ry,rz,sx,sy,sz;
             int shapet;
             std::string key;
@@ -290,12 +302,12 @@ namespace csX75
                 addShape(shapet);
                 curr_node -> change_parameters(tx,ty,tz,rx,ry,rz,sx,sy,sz);
                 node_pointer = curr_node;
+				tail_node = curr_node;
             }
             if(line == "NODE_END"){
-                node_pointer = node_pointer -> parent;
+            	curr_node = curr_node -> parent;
             }
 		}
-		curr_node = node_pointer -> children[0];
 	}
 
 

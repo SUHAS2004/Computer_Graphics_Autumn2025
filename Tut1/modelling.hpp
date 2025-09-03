@@ -34,8 +34,7 @@ GLfloat c_xrot=0.0,c_yrot=0.0,c_zrot=0.0;
 
 //Running variable to toggle culling on/off
 bool enable_culling=true;
-//Running variable to toggle wireframe/solid modelling
-bool solid=true;
+
 //Enable/Disable perspective view
 bool enable_perspective=false;
 //Shader program attribs
@@ -43,9 +42,15 @@ GLuint vPosition,vColor;
 
 //global matrix stack for hierarchical modelling
 std::vector<glm::mat4> matrixStack;
+//Running variable to toggle wireframe/solid modelling
+bool solid=false;
+
+//Set tesselation level
+int initial_level = 4;
 
 csX75::HNode* root_node;
 csX75::HNode* curr_node;
+csX75::HNode* tail_node;
 csX75::HNode* node1;
 csX75::HNode* node2;
 csX75::HNode* node3;

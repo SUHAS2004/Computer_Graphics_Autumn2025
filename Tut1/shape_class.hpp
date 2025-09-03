@@ -65,4 +65,10 @@ class box_t : public shape_t {
         
 
 };
+class dummy_t : public shape_t {
+    public:
+        ~dummy_t() override = default;
+        void draw() override;
+        explicit dummy_t(unsigned int level);
+};
 #endif

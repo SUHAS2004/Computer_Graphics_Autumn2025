@@ -1,3 +1,5 @@
+//Author: Suhas G
+
 #include "cmath"
 #include <algorithm>
 #include "shape_class.hpp"
@@ -21,14 +23,11 @@ void sphere_t::draw(){
     int num_vert = (1 + 4*(pow(2,level+1)-1) + level); // by sum of geometric series
     int num_traingles[8] = {12,60,132,276,564,1140,2292,4596}; //pre computed number of overlapping vertices required
     num_vertices = num_traingles[level]- 5;
-    //std::cout << "num of overlapping vertices : "<< num_vertices <<std::endl;
     glm::vec4 vertex[2*num_vert];
     int last_pos = 0; // position of the last added element
     for(int i = 0; i < level + 1; i++){ // iterate for each level
         int points_per_plane = pow(2,(2 + level - i)); // number of points in the circle(plane)
-        std::cout << "points in plane "<< i <<" are : " << points_per_plane <<std::endl;
         float z_val = 1.0f - 1.0f/pow(2,i); // z value of vertex
-        std::cout << "z value : "<< i/(level+1.0f) <<"  "<<i<< std::endl;
         float radius = sqrt(1.0f-pow(z_val,2)); // radius of the circle   
         for(int j = 0; j < points_per_plane + 1; j++){ // iterate for each equidistant point on circle
             vertex[last_pos].x = radius*sin(2*j*PI/points_per_plane);
@@ -39,9 +38,8 @@ void sphere_t::draw(){
             last_pos++;
         }
     }
-    //std::cout << "last pos : "<< last_pos << std::endl;
     last_pos = 0;
-    int last_pos_slow = 0;
+    int last_pos_slow = 0; // slow pointer for upper level and fast pointer for lower level
     for(int i = 0; i < level; i++){ // iterate for each level
         int points_per_plane = pow(2,(2 + level - i)); // number of points in the circle(plane)
         for(int j = 0; j < points_per_plane/2; j++){ // iterate for each equidistant point on circle
@@ -60,20 +58,17 @@ void sphere_t::draw(){
             colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             vertices.push_back(vertex[points_per_plane + 1 + last_pos_slow]);
             vertices.push_back(vertex[points_per_plane + 2 + last_pos_slow]);
-            std::cout << "last pos2 : "<< last_pos_slow + 2 + points_per_plane  << std::endl;
             vertices.push_back(vertex[last_pos + 1 ]);
             colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             colors.push_back(glm::vec4(0.0f,0.2f,0.5f,1.0f));
             colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
             last_pos = last_pos + 2;
             last_pos_slow++;
-            
         }
         last_pos++;
         last_pos_slow = last_pos;
     }
     //last_pos = num_vert - 6;
-    //std::cout << "last pos1 : "<< last_pos << std::endl;
     glm::vec4 top;
     top.x = 0;
     top.y = 0;
@@ -81,7 +76,6 @@ void sphere_t::draw(){
     top.w = 1;
     for(int i = 0; i < 4; i++){
         vertices.push_back(vertex[last_pos]);
-        //std::cout << vertex[last_pos].x <<"-----"<< vertex[last_pos].y <<"------"<< vertex[last_pos].z <<std::endl;
         vertices.push_back(vertex[last_pos+1]);
         vertices.push_back(top);
         colors.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
@@ -247,14 +241,14 @@ void box_t::draw() {
     num_vertices = 36*(level + 1)*(level + 1)*(level +1);
 
     glm::vec4 v_positions[8] = {
-    glm::vec4(0.0, -0.1, 0.1, 1.0),
-    glm::vec4(0.0, 0.1, 0.1, 1.0),
-    glm::vec4(0.2, 0.1, 0.1, 1.0),
-    glm::vec4(0.2, -0.1, 0.1, 1.0),
-    glm::vec4(0.0, -0.1, -0.1, 1.0),
-    glm::vec4(0.0, 0.1, -0.1, 1.0),
-    glm::vec4(0.2, 0.1, -0.1, 1.0),
-    glm::vec4(0.2, -0.1, -0.1, 1.0)};
+    glm::vec4(0.0,            -1.0/(level + 1), 1.0/(level + 1), 1.0),
+    glm::vec4(0.0,             1.0/(level + 1), 1.0/(level + 1), 1.0),
+    glm::vec4(2.0/(level + 1), 1.0/(level + 1), 1.0/(level + 1), 1.0),
+    glm::vec4(2.0/(level + 1),-1.0/(level + 1), 1.0/(level + 1), 1.0),
+    glm::vec4(0.0,            -1.0/(level + 1), -1.0/(level + 1), 1.0),
+    glm::vec4(0.0,             1.0/(level + 1), -1.0/(level + 1), 1.0),
+    glm::vec4(2.0/(level + 1), 1.0/(level + 1), -1.0/(level + 1), 1.0),
+    glm::vec4(2.0/(level + 1),-1.0/(level + 1), -1.0/(level + 1), 1.0)};
 
     //RGBA colors
     glm::vec4 init_colors[8] = {
@@ -290,8 +284,6 @@ void box_t::draw() {
 // quad generates two triangles for each face and assigns colors to the vertices
 void box_t::quad(int a, int b, int c, int d, glm::vec4* init_positions, glm::vec4* init_colors)
 {    
-
-
     int tri_idx=0;
     colors.push_back(init_colors[a]); vertices.push_back(init_positions[a]); tri_idx++;
     colors.push_back(init_colors[b]); vertices.push_back(init_positions[b]); tri_idx++;
@@ -300,4 +292,13 @@ void box_t::quad(int a, int b, int c, int d, glm::vec4* init_positions, glm::vec
     colors.push_back(init_colors[c]); vertices.push_back(init_positions[c]); tri_idx++;
     colors.push_back(init_colors[d]); vertices.push_back(init_positions[d]); tri_idx++;
 }
+dummy_t::dummy_t(unsigned int level) : shape_t(level) {
+    shape_int = 5;
+}
+void dummy_t::draw() {
+    num_vertices = 1;
+    vertices.push_back(glm::vec4(1.0f,1.0f,1.0f,1.0f));
+    colors.push_back(glm::vec4(0.0f,0.0f,0.0f,1.0f));
+}
+
 
