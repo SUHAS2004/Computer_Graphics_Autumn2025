@@ -39,7 +39,10 @@ to the parent is also applied to the daughter node.
 | E |Edit the loaded model after loading it. Initially the rootnode is the current which make the transformations apply to thewhole model. Pressing E allows you to edit the last added shape to the model.  |
 | P |toggle projection view  |
 
-
+## Note
+The Tessellation level and solid/wireframe can be modified by
+the initial_level and solid variables respectively to any value between
+0 and 7 in the modelling.hpp file before make.
 
 ## Screenshots
 
