@@ -28,8 +28,8 @@ to the parent is also applied to the daughter node.
 | Key             | Function                                                                |
 | ----------------- | ------------------------------------------------------------------ |
 | M,I |  Modelling and Inspection mode |
-| 1, 2, 3, 4 | remove the last added shape  |
-| 5 | Rotation, Translation and Scaling mode applies to the last added shape |
+| 1, 2, 3, 4 | to add cone, cylinder, sphere and box respectively |
+| 5 | remove the previously added shape |
 | R, T, G |Rotation, Translation and Scaling mode, applies to the last added shape  |
 | X,Y,Z |Axis along which the transformation should be applied  |
 | left_arrow,right_arrow| increment and decrement the transformation in the respective direction |
